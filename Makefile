@@ -165,7 +165,7 @@ $(LOCALBIN):
 
 ## Tool Binaries
 KUBECTL ?= kubectl
-KIND ?= $(LOCALBIN)/kind
+KIND ?= kind
 HELM ?= $(LOCALBIN)/helm
 KUBEBUILDER ?= $(LOCALBIN)/kubebuilder
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
@@ -174,7 +174,6 @@ ENVTEST ?= $(LOCALBIN)/setup-envtest
 GOLANGCI_LINT = $(LOCALBIN)/golangci-lint
 
 ## Tool Versions
-KUBECTL_VERSION ?= $(shell curl -L -s https://dl.k8s.io/release/stable.txt)
 KIND_VERSION ?= v0.20.0
 HELM_VERSION ?= v3.14.3
 KUBEBUILDER_VERSION ?= v4.5.2
@@ -187,16 +186,7 @@ ENVTEST_K8S_VERSION ?= $(shell go list -m -f "{{ .Version }}" k8s.io/api | awk -
 GOLANGCI_LINT_VERSION ?= v1.63.4
 
 .PHONY: tools
-tools: kubectl kubebuilder kind helm kustomize controller-gen envtest golangci-lint ## Download all tools locally if necessary.
-
-.PHONY: kubectl
-kubectl: ## Download kubectl locally if necessary.
-	@if [ ! -f "$(LOCALBIN)/kubectl" ]; then \
-		echo "Installing kubectl $(KUBECTL_VERSION)"; \
-		curl -LO "https://dl.k8s.io/release/$(KUBECTL_VERSION)/bin/linux/amd64/kubectl"; \
-		chmod +x kubectl; \
-		mv kubectl $(LOCALBIN)/kubectl; \
-	fi
+tools: kubebuilder helm kustomize controller-gen envtest golangci-lint ## Download all tools locally if necessary.
 
 .PHONY: kubebuilder
 kubebuilder: $(KUBEBUILDER) ## Download kubebuilder locally if necessary.
@@ -206,11 +196,6 @@ $(KUBEBUILDER): $(LOCALBIN)
 		curl -L -o $(KUBEBUILDER) https://github.com/kubernetes-sigs/kubebuilder/releases/download/$(KUBEBUILDER_VERSION)/kubebuilder_linux_amd64; \
 		chmod +x $(KUBEBUILDER); \
 	fi
-
-.PHONY: kind
-kind: $(KIND) ## Download kind locally if necessary.
-$(KIND): $(LOCALBIN)
-	$(call go-install-tool,$(KIND),sigs.k8s.io/kind,$(KIND_VERSION))
 
 .PHONY: helm
 helm: $(HELM) ## Download helm locally if necessary.

@@ -1,0 +1,39 @@
+{{- if .Values.rbac.enable }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  name: controller-manager-role
+rules:
+- apiGroups:
+  - kubetarget.dev
+  resources:
+  - targetproviders
+  - virtualtargets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kubetarget.dev
+  resources:
+  - targetproviders/finalizers
+  - virtualtargets/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - kubetarget.dev
+  resources:
+  - targetproviders/status
+  - virtualtargets/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end -}}

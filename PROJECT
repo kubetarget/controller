@@ -5,6 +5,8 @@
 domain: kubetarget.dev
 layout:
 - go.kubebuilder.io/v4
+plugins:
+  helm.kubebuilder.io/v1-alpha: {}
 projectName: controller
 repo: github.com/kubetarget/controller
 resources:
