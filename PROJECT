@@ -7,4 +7,23 @@ layout:
 - go.kubebuilder.io/v4
 projectName: controller
 repo: github.com/kubetarget/controller
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kubetarget.dev
+  group: kubetarget
+  kind: VirtualTargetDevice
+  path: github.com/kubetarget/controller/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kubetarget.dev
+  group: kubetarget
+  kind: VirtualTargetProvider
+  path: github.com/kubetarget/controller/api/v1alpha1
+  version: v1alpha1
 version: "3"

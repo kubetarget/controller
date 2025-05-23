@@ -1,0 +1,5 @@
+## Append samples of your project ##
+resources:
+- kubetarget_v1alpha1_virtualtargetdevice.yaml
+- kubetarget_v1alpha1_virtualtargetprovider.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

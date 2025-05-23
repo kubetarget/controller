@@ -1,11 +1,35 @@
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    app.kubernetes.io/name: controller
-    app.kubernetes.io/managed-by: kustomize
   name: manager-role
 rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - kubetarget.kubetarget.dev
+  resources:
+  - virtualtargetdevices
+  - virtualtargetproviders
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kubetarget.kubetarget.dev
+  resources:
+  - virtualtargetdevices/finalizers
+  - virtualtargetproviders/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - kubetarget.kubetarget.dev
+  resources:
+  - virtualtargetdevices/status
+  - virtualtargetproviders/status
+  verbs:
+  - get
+  - patch
+  - update
