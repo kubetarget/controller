@@ -6,4 +6,24 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   name: virtualtarget-sample
 spec:
-  # TODO(user): Add fields here
+  targetProviderRef:
+    name: corellium-provider
+    namespace: default
+  type: corellium-device
+  config:
+    deviceType: "iphone16"
+    osVersion: "18.4"
+    memory: "4GB"
+    cpu: "4"
+    storage: "128GB"
+    network:
+      type: "wifi"
+      bandwidth: "100Mbps"
+    features:
+      - "camera"
+      - "gps"
+      - "bluetooth"
+      - "nfc"
+    tags:
+      Environment: "development"
+      Project: "mobile-testing"

@@ -17,7 +17,9 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -25,11 +27,16 @@ import (
 
 // VirtualTargetSpec defines the desired state of VirtualTarget.
 type VirtualTargetSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// TargetProviderRef specifies the target provider to use for management of this virtual target
+	TargetProviderRef corev1.ObjectReference `json:"targetProviderRef"`
 
-	// Foo is an example field of VirtualTarget. Edit virtualtarget_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Type specifies the type of virtual target as understood by the provider
+	// +kubebuilder:validation:Required
+	Type string `json:"type"`
+
+	// Config contains provider-specific configuration for the virtual target
+	// +kubebuilder:validation:Required
+	Config runtime.RawExtension `json:"config"`
 }
 
 // VirtualTargetStatus defines the observed state of VirtualTarget.

@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -25,11 +26,23 @@ import (
 
 // TargetProviderSpec defines the desired state of TargetProvider.
 type TargetProviderSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Image specifies the container image to use for the target provider
+	Image string `json:"image"`
 
-	// Foo is an example field of TargetProvider. Edit targetprovider_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Config contains the configuration for the target provider
+	Config TargetProviderConfig `json:"config"`
+
+	// Template is the pod template specification
+	Template corev1.PodTemplateSpec `json:"template,omitempty"`
+}
+
+// TargetProviderConfig defines the configuration for the target provider
+type TargetProviderConfig struct {
+	// Machine specifies the target machine type
+	Machine string `json:"machine"`
+
+	// Memory specifies the memory allocation for the target
+	Memory string `json:"memory"`
 }
 
 // TargetProviderStatus defines the observed state of TargetProvider.
