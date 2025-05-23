@@ -1,0 +1,9 @@
+apiVersion: kubetarget.dev/v1alpha1
+kind: TargetProvider
+metadata:
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+  name: targetprovider-sample
+spec:
+  # TODO(user): Add fields here

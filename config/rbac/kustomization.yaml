@@ -22,3 +22,11 @@ resources:
 # default, aiding admins in cluster management. Those roles are
 # not used by the {{ .ProjectName }} itself. You can comment the following lines
 # if you do not want those helpers be installed with your Project.
+- targetprovider_admin_role.yaml
+- targetprovider_editor_role.yaml
+- targetprovider_viewer_role.yaml
+- virtualtarget_admin_role.yaml
+- virtualtarget_editor_role.yaml
+- virtualtarget_viewer_role.yaml
+
+

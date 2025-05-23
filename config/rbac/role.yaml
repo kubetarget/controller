@@ -7,8 +7,8 @@ rules:
 - apiGroups:
   - kubetarget.dev
   resources:
-  - virtualhardwareproviders
-  - virtualhardwaretargets
+  - targetproviders
+  - virtualtargets
   verbs:
   - create
   - delete
@@ -20,15 +20,15 @@ rules:
 - apiGroups:
   - kubetarget.dev
   resources:
-  - virtualhardwareproviders/finalizers
-  - virtualhardwaretargets/finalizers
+  - targetproviders/finalizers
+  - virtualtargets/finalizers
   verbs:
   - update
 - apiGroups:
   - kubetarget.dev
   resources:
-  - virtualhardwareproviders/status
-  - virtualhardwaretargets/status
+  - targetproviders/status
+  - virtualtargets/status
   verbs:
   - get
   - patch

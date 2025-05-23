@@ -38,6 +38,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	kubetargetdevv1alpha1 "github.com/kubetarget/controller/api/v1alpha1"
+	"github.com/kubetarget/controller/internal/controller"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -200,6 +201,21 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err = (&controller.VirtualTargetReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VirtualTarget")
+		os.Exit(1)
+	}
+
+	if err = (&controller.TargetProviderReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "TargetProvider")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	if metricsCertWatcher != nil {
