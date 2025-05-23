@@ -1,5 +1,5 @@
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= ghcr.io/kubetarget/controller:latest
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -156,22 +156,28 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/default | $(KUBECTL) delete --ignore-not-found=$(ignore-not-found) -f -
 
-##@ Dependencies
+##@ Tools
 
-## Location to install dependencies to
+## Location to install tools to
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 
 ## Tool Binaries
 KUBECTL ?= kubectl
-KIND ?= kind
+KIND ?= $(LOCALBIN)/kind
+HELM ?= $(LOCALBIN)/helm
+KUBEBUILDER ?= $(LOCALBIN)/kubebuilder
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 GOLANGCI_LINT = $(LOCALBIN)/golangci-lint
 
 ## Tool Versions
+KUBECTL_VERSION ?= $(shell curl -L -s https://dl.k8s.io/release/stable.txt)
+KIND_VERSION ?= v0.20.0
+HELM_VERSION ?= v3.14.3
+KUBEBUILDER_VERSION ?= v4.5.2
 KUSTOMIZE_VERSION ?= v5.6.0
 CONTROLLER_TOOLS_VERSION ?= v0.17.2
 #ENVTEST_VERSION is the version of controller-runtime release branch to fetch the envtest setup script (i.e. release-0.20)
@@ -179,6 +185,37 @@ ENVTEST_VERSION ?= $(shell go list -m -f "{{ .Version }}" sigs.k8s.io/controller
 #ENVTEST_K8S_VERSION is the version of Kubernetes to use for setting up ENVTEST binaries (i.e. 1.31)
 ENVTEST_K8S_VERSION ?= $(shell go list -m -f "{{ .Version }}" k8s.io/api | awk -F'[v.]' '{printf "1.%d", $$3}')
 GOLANGCI_LINT_VERSION ?= v1.63.4
+
+.PHONY: tools
+tools: kubectl kubebuilder kind helm kustomize controller-gen envtest golangci-lint ## Download all tools locally if necessary.
+
+.PHONY: kubectl
+kubectl: ## Download kubectl locally if necessary.
+	@if [ ! -f "$(LOCALBIN)/kubectl" ]; then \
+		echo "Installing kubectl $(KUBECTL_VERSION)"; \
+		curl -LO "https://dl.k8s.io/release/$(KUBECTL_VERSION)/bin/linux/amd64/kubectl"; \
+		chmod +x kubectl; \
+		mv kubectl $(LOCALBIN)/kubectl; \
+	fi
+
+.PHONY: kubebuilder
+kubebuilder: $(KUBEBUILDER) ## Download kubebuilder locally if necessary.
+$(KUBEBUILDER): $(LOCALBIN)
+	@if [ ! -f "$(KUBEBUILDER)" ]; then \
+		echo "Installing kubebuilder $(KUBEBUILDER_VERSION)"; \
+		curl -L -o $(KUBEBUILDER) https://github.com/kubernetes-sigs/kubebuilder/releases/download/$(KUBEBUILDER_VERSION)/kubebuilder_linux_amd64; \
+		chmod +x $(KUBEBUILDER); \
+	fi
+
+.PHONY: kind
+kind: $(KIND) ## Download kind locally if necessary.
+$(KIND): $(LOCALBIN)
+	$(call go-install-tool,$(KIND),sigs.k8s.io/kind,$(KIND_VERSION))
+
+.PHONY: helm
+helm: $(HELM) ## Download helm locally if necessary.
+$(HELM): $(LOCALBIN)
+	$(call go-install-tool,$(HELM),helm.sh/helm/v3/cmd/helm,$(HELM_VERSION))
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
@@ -223,3 +260,38 @@ mv $(1) $(1)-$(3) ;\
 } ;\
 ln -sf $(1)-$(3) $(1)
 endef
+
+##@ Cluster Management
+
+.PHONY: cluster
+cluster: $(KIND) ## Create a Kind cluster called kubetarget.
+	$(KIND) get clusters | grep kubetarget || $(KIND) create cluster --name kubetarget --config hack/kind_cluster.yaml
+
+.PHONY: load-image
+load-image: docker-build ## Load the controller image into Kind cluster
+	$(KIND) load docker-image ${IMG} --name kubetarget
+
+##@ gRPC Tools
+
+.PHONY: grpcurl
+grpcurl: ## Install grpcurl tool
+	$(call go-install-tool,$(LOCALBIN)/grpcurl,github.com/fullstorydev/grpcurl/cmd/grpcurl,v1.8.9)
+
+.PHONY: grpcurl-list
+grpcurl-list: grpcurl ## List all gRPC services
+	$(LOCALBIN)/grpcurl -plaintext localhost:50051 list
+
+.PHONY: grpcurl-describe
+grpcurl-describe: grpcurl ## Describe a gRPC service
+	$(LOCALBIN)/grpcurl -plaintext localhost:50051 describe
+
+##@ Cleanup
+
+.PHONY: clean
+clean: $(KIND) ## Delete the Kind cluster and clean up the local environment.
+	$(KIND) delete cluster --name kubetarget
+	rm -rf bin/
+	rm -rf dist/
+	rm -rf cover.out
+	rm -rf Dockerfile.cross
+	rm -rf $(LOCALBIN)/*

@@ -22,10 +22,3 @@ resources:
 # default, aiding admins in cluster management. Those roles are
 # not used by the {{ .ProjectName }} itself. You can comment the following lines
 # if you do not want those helpers be installed with your Project.
-- virtualtargetprovider_admin_role.yaml
-- virtualtargetprovider_editor_role.yaml
-- virtualtargetprovider_viewer_role.yaml
-- virtualtargetdevice_admin_role.yaml
-- virtualtargetdevice_editor_role.yaml
-- virtualtargetdevice_viewer_role.yaml
-

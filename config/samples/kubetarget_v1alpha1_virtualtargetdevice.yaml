@@ -1,9 +1,0 @@
-apiVersion: kubetarget.kubetarget.dev/v1alpha1
-kind: VirtualTargetDevice
-metadata:
-  labels:
-    app.kubernetes.io/name: controller
-    app.kubernetes.io/managed-by: kustomize
-  name: virtualtargetdevice-sample
-spec:
-  # TODO(user): Add fields here

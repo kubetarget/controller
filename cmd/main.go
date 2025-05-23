@@ -37,8 +37,7 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	kubetargetv1alpha1 "github.com/kubetarget/controller/api/v1alpha1"
-	"github.com/kubetarget/controller/internal/controller"
+	kubetargetdevv1alpha1 "github.com/kubetarget/controller/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -49,8 +48,7 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
-	utilruntime.Must(kubetargetv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(kubetargetdevv1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -202,20 +200,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controller.VirtualTargetDeviceReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualTargetDevice")
-		os.Exit(1)
-	}
-	if err = (&controller.VirtualTargetProviderReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualTargetProvider")
-		os.Exit(1)
-	}
 	// +kubebuilder:scaffold:builder
 
 	if metricsCertWatcher != nil {

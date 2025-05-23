@@ -1,12 +1,27 @@
 # This kustomization.yaml is not intended to be run by itself,
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
-resources:
-- bases/kubetarget.kubetarget.dev_virtualtargetdevices.yaml
-- bases/kubetarget.kubetarget.dev_virtualtargetproviders.yaml
-# +kubebuilder:scaffold:crdkustomizeresource
+resources: []
+# [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'
+# [CERTMANAGER] Uncomment 'CERTMANAGER' sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.
+# 'CERTMANAGER' is just a marker here, you can remove it
+# [CERTMANAGER] Uncomment the following line to enable CA injection
+# - ../certmanager
+# [CERTMANAGER] Uncomment the following line to enable webhook patching
+# - ../webhook
+# [CERTMANAGER] Uncomment the following line to enable cainjection patching
+# - ../cainjection
 
-patches:
+# [CERTMANAGER] Uncomment the following line to enable the the CRD patches
+# - patches/crd-certmanager.yaml
+
+# [CERTMANAGER] Uncomment the following line to enable the the webhook patches
+# - patches/webhook-certmanager.yaml
+
+# [CERTMANAGER] Uncomment the following line to enable the the cainjection patches
+# - patches/cainjection-certmanager.yaml
+
+patches: []
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix.
 # patches here are for enabling the conversion webhook for each CRD
 # +kubebuilder:scaffold:crdkustomizewebhookpatch

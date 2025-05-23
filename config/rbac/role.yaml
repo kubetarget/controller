@@ -5,10 +5,10 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - kubetarget.kubetarget.dev
+  - kubetarget.dev
   resources:
-  - virtualtargetdevices
-  - virtualtargetproviders
+  - virtualhardwareproviders
+  - virtualhardwaretargets
   verbs:
   - create
   - delete
@@ -18,17 +18,17 @@ rules:
   - update
   - watch
 - apiGroups:
-  - kubetarget.kubetarget.dev
+  - kubetarget.dev
   resources:
-  - virtualtargetdevices/finalizers
-  - virtualtargetproviders/finalizers
+  - virtualhardwareproviders/finalizers
+  - virtualhardwaretargets/finalizers
   verbs:
   - update
 - apiGroups:
-  - kubetarget.kubetarget.dev
+  - kubetarget.dev
   resources:
-  - virtualtargetdevices/status
-  - virtualtargetproviders/status
+  - virtualhardwareproviders/status
+  - virtualhardwaretargets/status
   verbs:
   - get
   - patch
