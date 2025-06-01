@@ -19,8 +19,8 @@ CONTAINER_TOOL ?= docker
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
-.PHONY: all
-all: build
+.PHONY: all ## Build the controller and load it into the Kind cluster
+all: tools build
 
 ##@ General
 
@@ -151,15 +151,6 @@ install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~
 uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/crd | $(KUBECTL) delete --ignore-not-found=$(ignore-not-found) -f -
 
-.PHONY: deploy
-deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
-	$(KUSTOMIZE) build config/default | $(KUBECTL) apply -f -
-
-.PHONY: undeploy
-undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
-	$(KUSTOMIZE) build config/default | $(KUBECTL) delete --ignore-not-found=$(ignore-not-found) -f -
-
 ##@ Tools
 
 ## Location to install tools to
@@ -253,8 +244,23 @@ endef
 ##@ Cluster Management
 
 .PHONY: cluster
-cluster: $(KIND) ## Create a Kind cluster called kubetarget.
-	$(KIND) get clusters | grep kubetarget || $(KIND) create cluster --name kubetarget --config hack/kind_cluster.yaml
+cluster: ## Create a Kind cluster called kubetarget.
+	@if $(KIND) get clusters | grep -q kubetarget; then \
+		if ! $(KIND) get nodes --name kubetarget >/dev/null 2>&1; then \
+			echo "kubetarget cluster exists but is not accessible, recreating..."; \
+			$(KIND) delete cluster --name kubetarget; \
+			$(KIND) create cluster --name kubetarget --config hack/kind_cluster.yaml; \
+		else \
+			echo "kubetarget cluster is already running"; \
+		fi \
+	else \
+		echo "Creating new kubetarget cluster..."; \
+		$(KIND) create cluster --name kubetarget --config hack/kind_cluster.yaml; \
+	fi
+
+.PHONY: delete-cluster
+delete-cluster: ## Stop and delete the Kind cluster called kubetarget.
+	$(KIND) delete cluster --name kubetarget	
 
 .PHONY: load-image
 load-image: docker-build ## Load the controller image into Kind cluster
@@ -277,8 +283,7 @@ grpcurl-describe: grpcurl ## Describe a gRPC service
 ##@ Cleanup
 
 .PHONY: clean
-clean: $(KIND) ## Delete the Kind cluster and clean up the local environment.
-	$(KIND) delete cluster --name kubetarget
+clean: delete-cluster ## Delete the Kind cluster and clean up the local environment.
 	rm -rf bin/
 	rm -rf dist/
 	rm -rf cover.out

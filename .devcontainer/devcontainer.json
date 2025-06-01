@@ -1,13 +1,26 @@
 {
   "name": "Kubebuilder DevContainer",
-  "image": "docker.io/golang:1.23",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    "args": {
+      "GO_VERSION": "1.23"
+    }
+  },
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {}
   },
-
-  "runArgs": ["--network=host"],
-
+  "runArgs": [
+    "--network=host",
+    "--privileged"
+  ],
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "remoteEnv": {
+    "DOCKER_HOST": "unix:///var/run/docker.sock"
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -15,11 +28,10 @@
       },
       "extensions": [
         "ms-kubernetes-tools.vscode-kubernetes-tools",
-        "ms-azuretools.vscode-containers"
+        "ms-azuretools.vscode-containers",
+        "ms-vscode.makefile-tools"
       ]
     }
   },
-
   "onCreateCommand": "bash .devcontainer/post-install.sh"
 }
-
