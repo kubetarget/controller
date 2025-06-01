@@ -1,160 +1,80 @@
 # 🎯 KubeTarget
 
-KubeTarget is a Kubernetes extension that enables developers and test engineers to provision virtual embedded hardware targets on demand using Kubernetes Custom Resource Definitions (CRDs). It bridges the gap between CI/CD automation and Hardware-in-the-Loop (HiL) testing, enabling scalable and declarative GitOps workflows for hardware engineers.
+KubeTarget is a Kubernetes extension that enables developers and test engineers to provision **virtual embedded hardware targets** on demand using Kubernetes Custom Resource Definitions (CRDs). It bridges the gap between CI/CD automation and Hardware-in-the-Loop (HiL) testing, enabling scalable and declarative GitOps workflows for embedded systems.
 
 ## 🚀 Key Features
 
-- **Virtual Hardware CRDs**: Provision virtual hardware anywhere using familiar Kubernetes resources and GitOps.
-- **Pluggable Provider Model**: Easily add multiple local and remote virtualization providers including QEMU, Corellium, and Android Virtual Devices (AVDs).
-- **Secure, Multi-Tenant Deployment**: Namespace-scoped providers support different teams or credentials (e.g., different AWS accounts).
-- **Jumpstarter Integration**: Run Hardware-in-the-Loop (HiL) tests directly against provisioned devices using structured test APIs.
-- **Kubernetes-Native**: Built on Pods, CRDs, RBAC, and standard Kubernetes APIs.
+- **Virtual Hardware**: Provision virtual embedded devices anywhere using Kubernetes resources.
+- **Multiple Backends**: Support multiple virtualization backends such as QEMU, Corellium, AVD, and AWS Graviton with pluggable CRDs.
+- **Unified Instance Model**: All provisioned targets are tracked using the `VirtualTargetInstance` CRD, regardless of backend.
+- **Sidecar Injection**: Run test agents as sidecars directly inside the virtual target pod.
+- **Autoscaling and TTL**: Ephemeral targets can be scaled up/down dynamically based on demand and automatically cleaned up after use.
+- **Multi-Tenant Safe**: Namespace-scoped provider instances allow secure separation between teams or credentials.
+- **Kubernetes Native**: Built on Pods, CRDs, RBAC, and native Kubernetes constructs.
+
+## 🔁 How Does KubeTarget Compare to KubeVirt?
+
+While both KubeTarget and KubeVirt enable virtualization within Kubernetes, they serve very different purposes:
+
+- **KubeTarget** is designed for ephemeral, on-demand virtual hardware—ideal for embedded systems, HiL testing, and CI pipelines. It supports multiple backend providers (QEMU, Corellium, AVD, etc.) and integrates natively with tools like Jumpstarter for interface-level testing.
+
+- **KubeVirt** focuses on long-lived VMs for enterprise applications using libvirt/KVM, with features like persistent storage, VM migration, and traditional server virtualization.
+
+### Key Differences
+
+- KubeTarget uses multiple lightweight, pluggable backends and CRDs, while KubeVirt relies on the more robust libvirt runtime.
+- KubeTarget emphasizes sidecar support, TTL-based cleanup, and GitOps automation, making it ideal for test automation.
+- KubeVirt is better suited for stateful VM workloads requiring traditional virtualization features.
+
+### When to use KubeTarget?
+
+Use KubeTarget when you're simulating or testing virtual devices. Use KubeVirt when you're running virtualized applications.
 
 ## 🔄 What is TargetOps?
 
-**TargetOps** is a GitOps-based methodology to manage virtual hardware targets, enabling teams to version control, automate, and declaratively manage their virtual hardware infrastructure through Kubernetes.
+**TargetOps** is a GitOps-native approach to embedded systems testing. Just like DevOps brought Infrastructure as Code, TargetOps brings **Hardware as Code**—version-controlled, declarative test environments that run virtual or real hardware through Kubernetes.
 
-## 🧱 Architecture
-
-- **`VirtualTargetDevice`**: CRD that defines a virtual device under test.
-- **`VirtualTargetProvider`**: CRD that specifies a container image and runtime config for a gRPC-based provisioning provider.
-
-## 📦 Example
-
-Provision an STM32F4 device in QEMU and run CAN bus loopback tests with Jumpstarter:
+## 📦 Example: QEMU STM32F4 Virtual Target
 
 ```yaml
-apiVersion: kubetarget.dev/v1alpha1
-kind: VirtualTargetDevice
+# QEMU Target Definition
+apiVersion: qemu.kubetarget.dev/v1alpha1
+kind: QemuVirtualTarget
 metadata:
-  name: stm32f4
+  name: stm32f4-qemu
 spec:
-  providerRef: qemu-arm-provider
-  hardwareType: stm32f4
-  configuration:
-    peripherals:
-      can:
-        count: 2
-      uart:
-        count: 1
-    firmware:
-      configMap: stm32f4-firmware
+  architecture: arm
+  qemuConfig:
+    machine: stm32-p103
+    cpu: cortex-m3
+    memory: 256M
+    drives:
+      - name: firmware
+        type: pflash
+        source:
+          configMap:
+            name: stm32f4-firmware
+    devices:
+      - name: uart0
+        type: serial
+      - name: can0
+        type: socket
 ```
 
-## Getting Started
+## 🧩 Extending KubeTarget
 
-### Prerequisites
-- go version v1.23.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
+Want to add a new provider?
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+1. Implement a provisioner.
+2. Register it with the KubeTarget controller.
+3. Define a new `XVirtualTarget` CRD in your own API group (e.g., `corellium.kubetarget.dev/v1alpha1`).
 
-```sh
-make docker-build docker-push IMG=ghcr.io/kubetarget/controller:latest
-```
+## 🤝 Contributing
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don't work.
+We welcome contributions to expand target support, optimize autoscaling, and improve integrations like Jumpstarter and Tekton!
 
-**Install the CRDs into the cluster:**
+> Run `make help` for available targets and development tools.
 
-```sh
-make install
-```
+## 🪪 License
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
-
-```sh
-make deploy IMG=ghcr.io/kubetarget/controller:latest
-```
-
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
-
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
-
-```sh
-kubectl apply -k config/samples/
-```
-
->**NOTE**: Ensure that the samples has default values to test it out.
-
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
-
-```sh
-kubectl delete -k config/samples/
-```
-
-**Delete the APIs(CRDs) from the cluster:**
-
-```sh
-make uninstall
-```
-
-**UnDeploy the controller from the cluster:**
-
-```sh
-make undeploy
-```
-
-## Project Distribution
-
-Following the options to release and provide this solution to the users.
-
-### By providing a bundle with all YAML files
-
-1. Build the installer for the image built and published in the registry:
-
-```sh
-make build-installer IMG=<some-registry>/controller:tag
-```
-
-**NOTE:** The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without its
-dependencies.
-
-2. Using the installer
-
-Users can just run 'kubectl apply -f <URL for YAML BUNDLE>' to install
-the project, i.e.:
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/controller/<tag or branch>/dist/install.yaml
-```
-
-### By providing a Helm Chart
-
-1. Build the chart using the optional helm plugin
-
-```sh
-kubebuilder edit --plugins=helm/v1-alpha
-```
-
-2. See that a chart was generated under 'dist/chart', and users
-can obtain this solution from there.
-
-**NOTE:** If you change the project, you need to update the Helm Chart
-using the same command above to sync the latest changes. Furthermore,
-if you create webhooks, you need to use the above command with
-the '--force' flag and manually ensure that any custom configuration
-previously added to 'dist/chart/values.yaml' or 'dist/chart/manager/manager.yaml'
-is manually re-applied afterwards.
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
-
-## License
-
-KubeTarget is licensed under the Apache 2.0 License ([LICENSE](LICENSE) or
-[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)).
+KubeTarget is licensed under the Apache 2.0 License ([LICENSE](LICENSE) or [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)).

@@ -29,7 +29,10 @@
       "extensions": [
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "ms-azuretools.vscode-containers",
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
+        "DavidAnson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one",
+        "bierner.markdown-mermaid"
       ]
     }
   },
