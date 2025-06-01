@@ -76,7 +76,7 @@ test-e2e: manifests generate fmt vet ## Run the e2e tests. Expected an isolated 
 		echo "Kind is not installed. Please install Kind manually."; \
 		exit 1; \
 	}
-	@$(KIND) get clusters | grep -q '$(CLUSTER)' || { \
+	@$(KIND) get clusters | grep -q '${CLUSTER}' || { \
 		echo "No Kind cluster is running. Please start a Kind cluster before running the e2e tests."; \
 		exit 1; \
 	}
@@ -255,17 +255,17 @@ endef
 
 .PHONY: cluster
 cluster: ## Create a Kind cluster called kubetarget.
-	@if $(KIND) get clusters | grep -q $(CLUSTER); then \
-		if ! $(KIND) get nodes --name $(CLUSTER) >/dev/null 2>&1; then \
+	@if $(KIND) get clusters | grep -q ${CLUSTER}; then \
+		if ! $(KIND) get nodes --name ${CLUSTER} >/dev/null 2>&1; then \
 			echo "kubetarget cluster exists but is not accessible, recreating..."; \
-			$(KIND) delete cluster --name $(CLUSTER); \
-			$(KIND) create cluster --name $(CLUSTER) --config hack/kind_cluster.yaml; \
+			$(KIND) delete cluster --name ${CLUSTER}; \
+			$(KIND) create cluster --name ${CLUSTER} --config hack/kind_cluster.yaml; \
 		else \
-			echo "$(CLUSTER) cluster is already running"; \
+			echo "${CLUSTER} cluster is already running"; \
 		fi \
 	else \
-		echo "Creating new $(CLUSTER) cluster..."; \
-		$(KIND) create cluster --name $(CLUSTER) --config hack/kind_cluster.yaml; \
+		echo "Creating new ${CLUSTER} cluster..."; \
+		$(KIND) create cluster --name ${CLUSTER} --config hack/kind_cluster.yaml; \
 	fi
 
 .PHONY: delete-cluster
