@@ -2,6 +2,21 @@
 IMG ?= ghcr.io/kubetarget/controller:latest
 CLUSTER ?= kubetarget
 
+# Get the system architecture (i.e. aarch64, amd64)
+ARCH_RAW := $(shell uname -m)
+# Normalize the arch variable depending on output
+ifeq ($(ARCH_RAW),x86_64)
+    ARCH := amd64
+else ifeq ($(ARCH_RAW),amd64)
+    ARCH := amd64
+else ifeq ($(ARCH_RAW),aarch64)
+    ARCH := arm64
+else ifeq ($(ARCH_RAW),arm64)
+    ARCH := arm64
+else
+    $(error Unsupported architecture: $(ARCH_RAW))
+endif
+
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -198,7 +213,7 @@ kubebuilder: $(KUBEBUILDER) ## Download kubebuilder locally if necessary.
 $(KUBEBUILDER): $(LOCALBIN)
 	@if [ ! -f "$(KUBEBUILDER)" ]; then \
 		echo "Installing kubebuilder $(KUBEBUILDER_VERSION)"; \
-		curl -L -o $(KUBEBUILDER) https://github.com/kubernetes-sigs/kubebuilder/releases/download/$(KUBEBUILDER_VERSION)/kubebuilder_linux_amd64; \
+		curl -L -o $(KUBEBUILDER) https://github.com/kubernetes-sigs/kubebuilder/releases/download/$(KUBEBUILDER_VERSION)/kubebuilder_linux_$(ARCH); \
 		chmod +x $(KUBEBUILDER); \
 	fi
 
