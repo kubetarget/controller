@@ -1,12 +1,6 @@
 {
   "name": "Kubebuilder DevContainer",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".",
-    "args": {
-      "GO_VERSION": "1.23"
-    }
-  },
+  "image": "mcr.microsoft.com/devcontainers/go:1.23",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {}
