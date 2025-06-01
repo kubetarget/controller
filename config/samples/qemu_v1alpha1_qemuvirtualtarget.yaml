@@ -1,0 +1,9 @@
+apiVersion: qemu.kubetarget.dev/v1alpha1
+kind: QemuVirtualTarget
+metadata:
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+  name: qemuvirtualtarget-sample
+spec:
+  # TODO(user): Add fields here

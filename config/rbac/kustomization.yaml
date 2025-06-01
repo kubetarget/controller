@@ -22,7 +22,12 @@ resources:
 # default, aiding admins in cluster management. Those roles are
 # not used by the {{ .ProjectName }} itself. You can comment the following lines
 # if you do not want those helpers be installed with your Project.
-- core_virtualtargetprovider_admin_role.yaml
-- core_virtualtargetprovider_editor_role.yaml
-- core_virtualtargetprovider_viewer_role.yaml
-
+- qemu_qemuvirtualtarget_admin_role.yaml
+- qemu_qemuvirtualtarget_editor_role.yaml
+- qemu_qemuvirtualtarget_viewer_role.yaml
+- qemu_qemutargetprovider_admin_role.yaml
+- qemu_qemutargetprovider_editor_role.yaml
+- qemu_qemutargetprovider_viewer_role.yaml
+- core_virtualtargetinstance_admin_role.yaml
+- core_virtualtargetinstance_editor_role.yaml
+- core_virtualtargetinstance_viewer_role.yaml

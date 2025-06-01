@@ -23,17 +23,17 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// VirtualTargetProviderSpec defines the desired state of VirtualTargetProvider.
-type VirtualTargetProviderSpec struct {
+// QemuVirtualTargetSpec defines the desired state of QemuVirtualTarget.
+type QemuVirtualTargetSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of VirtualTargetProvider. Edit virtualtargetprovider_types.go to remove/update
+	// Foo is an example field of QemuVirtualTarget. Edit qemuvirtualtarget_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
 }
 
-// VirtualTargetProviderStatus defines the observed state of VirtualTargetProvider.
-type VirtualTargetProviderStatus struct {
+// QemuVirtualTargetStatus defines the observed state of QemuVirtualTarget.
+type QemuVirtualTargetStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,24 +41,24 @@ type VirtualTargetProviderStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 
-// VirtualTargetProvider is the Schema for the virtualtargetproviders API.
-type VirtualTargetProvider struct {
+// QemuVirtualTarget is the Schema for the qemuvirtualtargets API.
+type QemuVirtualTarget struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VirtualTargetProviderSpec   `json:"spec,omitempty"`
-	Status VirtualTargetProviderStatus `json:"status,omitempty"`
+	Spec   QemuVirtualTargetSpec   `json:"spec,omitempty"`
+	Status QemuVirtualTargetStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// VirtualTargetProviderList contains a list of VirtualTargetProvider.
-type VirtualTargetProviderList struct {
+// QemuVirtualTargetList contains a list of QemuVirtualTarget.
+type QemuVirtualTargetList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []VirtualTargetProvider `json:"items"`
+	Items           []QemuVirtualTarget `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&VirtualTargetProvider{}, &VirtualTargetProviderList{})
+	SchemeBuilder.Register(&QemuVirtualTarget{}, &QemuVirtualTargetList{})
 }

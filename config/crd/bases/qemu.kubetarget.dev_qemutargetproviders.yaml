@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.17.2
-  name: virtualtargetproviders.core.kubetarget.dev
+  name: qemutargetproviders.qemu.kubetarget.dev
 spec:
-  group: core.kubetarget.dev
+  group: qemu.kubetarget.dev
   names:
-    kind: VirtualTargetProvider
-    listKind: VirtualTargetProviderList
-    plural: virtualtargetproviders
-    singular: virtualtargetprovider
+    kind: QemuTargetProvider
+    listKind: QemuTargetProviderList
+    plural: qemutargetproviders
+    singular: qemutargetprovider
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: VirtualTargetProvider is the Schema for the virtualtargetproviders
+        description: QemuTargetProvider is the Schema for the qemutargetproviders
           API.
         properties:
           apiVersion:
@@ -38,16 +38,15 @@ spec:
           metadata:
             type: object
           spec:
-            description: VirtualTargetProviderSpec defines the desired state of VirtualTargetProvider.
+            description: QemuTargetProviderSpec defines the desired state of QemuTargetProvider.
             properties:
               foo:
-                description: Foo is an example field of VirtualTargetProvider. Edit
-                  virtualtargetprovider_types.go to remove/update
+                description: Foo is an example field of QemuTargetProvider. Edit qemutargetprovider_types.go
+                  to remove/update
                 type: string
             type: object
           status:
-            description: VirtualTargetProviderStatus defines the observed state of
-              VirtualTargetProvider.
+            description: QemuTargetProviderStatus defines the observed state of QemuTargetProvider.
             type: object
         type: object
     served: true

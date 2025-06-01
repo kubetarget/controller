@@ -17,7 +17,25 @@ resources:
   controller: true
   domain: kubetarget.dev
   group: core
-  kind: VirtualTargetProvider
+  kind: VirtualTargetInstance
   path: github.com/kubetarget/controller/api/core/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kubetarget.dev
+  group: qemu
+  kind: QemuTargetProvider
+  path: github.com/kubetarget/controller/api/qemu/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kubetarget.dev
+  group: qemu
+  kind: QemuVirtualTarget
+  path: github.com/kubetarget/controller/api/qemu/v1alpha1
   version: v1alpha1
 version: "3"

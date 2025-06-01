@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package core
+package qemu
 
 import (
 	"context"
@@ -24,29 +24,29 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	corev1alpha1 "github.com/kubetarget/controller/api/core/v1alpha1"
+	qemuv1alpha1 "github.com/kubetarget/controller/api/qemu/v1alpha1"
 )
 
-// VirtualTargetProviderReconciler reconciles a VirtualTargetProvider object
-type VirtualTargetProviderReconciler struct {
+// QemuTargetProviderReconciler reconciles a QemuTargetProvider object
+type QemuTargetProviderReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=core.kubetarget.dev,resources=virtualtargetproviders,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=core.kubetarget.dev,resources=virtualtargetproviders/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=core.kubetarget.dev,resources=virtualtargetproviders/finalizers,verbs=update
+// +kubebuilder:rbac:groups=qemu.kubetarget.dev,resources=qemutargetproviders,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=qemu.kubetarget.dev,resources=qemutargetproviders/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=qemu.kubetarget.dev,resources=qemutargetproviders/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the VirtualTargetProvider object against the actual cluster state, and then
+// the QemuTargetProvider object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.20.4/pkg/reconcile
-func (r *VirtualTargetProviderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *QemuTargetProviderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = logf.FromContext(ctx)
 
 	// TODO(user): your logic here
@@ -55,9 +55,9 @@ func (r *VirtualTargetProviderReconciler) Reconcile(ctx context.Context, req ctr
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *VirtualTargetProviderReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *QemuTargetProviderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&corev1alpha1.VirtualTargetProvider{}).
-		Named("core-virtualtargetprovider").
+		For(&qemuv1alpha1.QemuTargetProvider{}).
+		Named("qemu-qemutargetprovider").
 		Complete(r)
 }

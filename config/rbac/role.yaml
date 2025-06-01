@@ -7,7 +7,7 @@ rules:
 - apiGroups:
   - core.kubetarget.dev
   resources:
-  - virtualtargetproviders
+  - virtualtargetinstances
   verbs:
   - create
   - delete
@@ -19,13 +19,42 @@ rules:
 - apiGroups:
   - core.kubetarget.dev
   resources:
-  - virtualtargetproviders/finalizers
+  - virtualtargetinstances/finalizers
   verbs:
   - update
 - apiGroups:
   - core.kubetarget.dev
   resources:
-  - virtualtargetproviders/status
+  - virtualtargetinstances/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - qemu.kubetarget.dev
+  resources:
+  - qemutargetproviders
+  - qemuvirtualtargets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - qemu.kubetarget.dev
+  resources:
+  - qemutargetproviders/finalizers
+  - qemuvirtualtargets/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - qemu.kubetarget.dev
+  resources:
+  - qemutargetproviders/status
+  - qemuvirtualtargets/status
   verbs:
   - get
   - patch

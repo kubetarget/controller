@@ -39,7 +39,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	corev1alpha1 "github.com/kubetarget/controller/api/core/v1alpha1"
+	qemuv1alpha1 "github.com/kubetarget/controller/api/qemu/v1alpha1"
 	corecontroller "github.com/kubetarget/controller/internal/controller/core"
+	qemucontroller "github.com/kubetarget/controller/internal/controller/qemu"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -51,6 +53,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
+	utilruntime.Must(qemuv1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -202,11 +205,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&corecontroller.VirtualTargetProviderReconciler{
+	if err = (&corecontroller.VirtualTargetInstanceReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualTargetProvider")
+		setupLog.Error(err, "unable to create controller", "controller", "VirtualTargetInstance")
+		os.Exit(1)
+	}
+	if err = (&qemucontroller.QemuTargetProviderReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "QemuTargetProvider")
+		os.Exit(1)
+	}
+	if err = (&qemucontroller.QemuVirtualTargetReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "QemuVirtualTarget")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
