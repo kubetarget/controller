@@ -5,6 +5,7 @@
 domain: kubetarget.dev
 layout:
 - go.kubebuilder.io/v4
+multigroup: true
 plugins:
   helm.kubebuilder.io/v1-alpha: {}
 projectName: controller
@@ -15,15 +16,8 @@ resources:
     namespaced: true
   controller: true
   domain: kubetarget.dev
-  kind: VirtualTarget
-  path: github.com/kubetarget/controller/api/v1alpha1
-  version: v1alpha1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: kubetarget.dev
-  kind: TargetProvider
-  path: github.com/kubetarget/controller/api/v1alpha1
+  group: core
+  kind: VirtualTargetProvider
+  path: github.com/kubetarget/controller/api/core/v1alpha1
   version: v1alpha1
 version: "3"

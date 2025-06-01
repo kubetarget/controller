@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package core
 
 import (
 	"context"
@@ -27,10 +27,10 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	kubetargetdevv1alpha1 "github.com/kubetarget/controller/api/v1alpha1"
+	corev1alpha1 "github.com/kubetarget/controller/api/core/v1alpha1"
 )
 
-var _ = Describe("VirtualTarget Controller", func() {
+var _ = Describe("VirtualTargetProvider Controller", func() {
 	Context("When reconciling a resource", func() {
 		const resourceName = "test-resource"
 
@@ -40,13 +40,13 @@ var _ = Describe("VirtualTarget Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		virtualtarget := &kubetargetdevv1alpha1.VirtualTarget{}
+		virtualtargetprovider := &corev1alpha1.VirtualTargetProvider{}
 
 		BeforeEach(func() {
-			By("creating the custom resource for the Kind VirtualTarget")
-			err := k8sClient.Get(ctx, typeNamespacedName, virtualtarget)
+			By("creating the custom resource for the Kind VirtualTargetProvider")
+			err := k8sClient.Get(ctx, typeNamespacedName, virtualtargetprovider)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &kubetargetdevv1alpha1.VirtualTarget{
+				resource := &corev1alpha1.VirtualTargetProvider{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,16 +59,16 @@ var _ = Describe("VirtualTarget Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &kubetargetdevv1alpha1.VirtualTarget{}
+			resource := &corev1alpha1.VirtualTargetProvider{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 
-			By("Cleanup the specific resource instance VirtualTarget")
+			By("Cleanup the specific resource instance VirtualTargetProvider")
 			Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
 		})
 		It("should successfully reconcile the resource", func() {
 			By("Reconciling the created resource")
-			controllerReconciler := &VirtualTargetReconciler{
+			controllerReconciler := &VirtualTargetProviderReconciler{
 				Client: k8sClient,
 				Scheme: k8sClient.Scheme(),
 			}

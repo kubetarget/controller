@@ -49,6 +49,10 @@ manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and Cust
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
+.PHONY: manifests ## Generate the Helm chart to install the CustomResourceDefinition objects
+chart:
+	$(KUBEBUILDER) edit --plugins=helm/v1-alpha
+
 .PHONY: fmt
 fmt: ## Run go fmt against code.
 	go fmt ./...
@@ -92,7 +96,7 @@ lint-config: golangci-lint ## Verify golangci-lint linter configuration
 ##@ Build
 
 .PHONY: build
-build: manifests generate fmt vet ## Build manager binary.
+build: manifests generate fmt vet chart ## Build manager binary.
 	go build -o bin/manager cmd/main.go
 
 .PHONY: run

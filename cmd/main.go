@@ -24,6 +24,7 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
+
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -37,8 +38,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	kubetargetdevv1alpha1 "github.com/kubetarget/controller/api/v1alpha1"
-	"github.com/kubetarget/controller/internal/controller"
+	corev1alpha1 "github.com/kubetarget/controller/api/core/v1alpha1"
+	corecontroller "github.com/kubetarget/controller/internal/controller/core"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -49,7 +50,7 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	utilruntime.Must(kubetargetdevv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -201,19 +202,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controller.VirtualTargetReconciler{
+	if err = (&corecontroller.VirtualTargetProviderReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualTarget")
-		os.Exit(1)
-	}
-
-	if err = (&controller.TargetProviderReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "TargetProvider")
+		setupLog.Error(err, "unable to create controller", "controller", "VirtualTargetProvider")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

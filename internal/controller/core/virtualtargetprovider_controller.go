@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package core
 
 import (
 	"context"
@@ -24,29 +24,29 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	kubetargetdevv1alpha1 "github.com/kubetarget/controller/api/v1alpha1"
+	corev1alpha1 "github.com/kubetarget/controller/api/core/v1alpha1"
 )
 
-// VirtualTargetReconciler reconciles a VirtualTarget object
-type VirtualTargetReconciler struct {
+// VirtualTargetProviderReconciler reconciles a VirtualTargetProvider object
+type VirtualTargetProviderReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=kubetarget.dev,resources=virtualtargets,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=kubetarget.dev,resources=virtualtargets/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=kubetarget.dev,resources=virtualtargets/finalizers,verbs=update
+// +kubebuilder:rbac:groups=core.kubetarget.dev,resources=virtualtargetproviders,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core.kubetarget.dev,resources=virtualtargetproviders/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=core.kubetarget.dev,resources=virtualtargetproviders/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the VirtualTarget object against the actual cluster state, and then
+// the VirtualTargetProvider object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.20.4/pkg/reconcile
-func (r *VirtualTargetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *VirtualTargetProviderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = logf.FromContext(ctx)
 
 	// TODO(user): your logic here
@@ -55,9 +55,9 @@ func (r *VirtualTargetReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *VirtualTargetReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *VirtualTargetProviderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&kubetargetdevv1alpha1.VirtualTarget{}).
-		Named("virtualtarget").
+		For(&corev1alpha1.VirtualTargetProvider{}).
+		Named("core-virtualtargetprovider").
 		Complete(r)
 }

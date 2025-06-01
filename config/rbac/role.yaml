@@ -5,10 +5,9 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - kubetarget.dev
+  - core.kubetarget.dev
   resources:
-  - targetproviders
-  - virtualtargets
+  - virtualtargetproviders
   verbs:
   - create
   - delete
@@ -18,17 +17,15 @@ rules:
   - update
   - watch
 - apiGroups:
-  - kubetarget.dev
+  - core.kubetarget.dev
   resources:
-  - targetproviders/finalizers
-  - virtualtargets/finalizers
+  - virtualtargetproviders/finalizers
   verbs:
   - update
 - apiGroups:
-  - kubetarget.dev
+  - core.kubetarget.dev
   resources:
-  - targetproviders/status
-  - virtualtargets/status
+  - virtualtargetproviders/status
   verbs:
   - get
   - patch
